@@ -9,7 +9,7 @@ steps:
   entrypoint: sh
   args:
     - -c
-    - '(/cloud_sql_proxy -instances=portal-api-288802:us-central1:portal-api-database=tcp:3306 & sleep 2) && (pip install -t . -r requirements.txt)'
+    - '(/cloud_sql_proxy -instances=portal-api-288802:us-central1:portal-api-database=tcp:0.0.0.0:3306 & sleep 2) && (pip install -t . -r requirements.txt)'
   id: install
 - name: python:3.7
   entrypoint: python3
