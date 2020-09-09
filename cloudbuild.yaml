@@ -15,7 +15,7 @@ steps:
   entrypoint: sh
   args:
     - -c
-    - '(./cloud_sql_proxy -instances=portal-api-288802:us-central1:portal-api-database=tcp:0.0.0.0:3306 & sleep 5) && (python manage.py test)')
+    - '(./cloud_sql_proxy -instances=portal-api-288802:us-central1:portal-api-database=tcp:0.0.0.0:3306 & sleep 5) && (python manage.py test)'
   env:
     - "DJANGO_SETTINGS_MODULE=portal.settings"
   id: testing
