@@ -26,7 +26,7 @@ SECRET_KEY = 'v)%+kckm0o%w&3pfiyb)y57bj)y_ao^x8o+g)6)dwodr5i57v_'
 DEBUG = True
 APPEND_SLASH = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['portal-api-288802.uc.r.appspot.com']
 
 
 # Application definition
