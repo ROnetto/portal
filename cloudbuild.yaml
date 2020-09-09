@@ -10,7 +10,7 @@ steps:
     - "DJANGO_SETTINGS_MODULE=portal.settings"
   id: testing
   waitFor:
-    - build
+    - install
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
   id: deploy
