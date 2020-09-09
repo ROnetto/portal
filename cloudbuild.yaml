@@ -1,17 +1,23 @@
 steps:
 - name: python:3.7
-  entrypoint: python3
-  args: ["-m", "pip", "install", "-t", ".", "-r", "requirements.txt"]
+  entrypoint: sh
+  args:
+    - -c
+    - 'wget -O /cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v1.16/cloud_sql_proxy.linux.386 &&  chmod +x /cloud_sql_proxy'
+  id: proxy-install
+- name: python:3.7
+  entrypoint: sh
+  args:
+    - -c
+    - '(/cloud_sql_proxy -instances=portal-api-288802:us-central1:portal-api-database=tcp:3306 & sleep 2) && (pip install -t . -r requirements.txt)'
   id: install
 - name: python:3.7
   entrypoint: python3
   args: ["manage.py", "test"]
   env:
     - "DJANGO_SETTINGS_MODULE=portal.settings"
-    - "GAE_APPLICATION=True"
   id: testing
-  waitFor:
-    - install
+  waitFor: ['proxy-install', 'install']
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
   id: deploy
