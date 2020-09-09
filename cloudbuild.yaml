@@ -1,4 +1,8 @@
 steps:
+- name: python:3.7
+  args: ["python","-m","unittest","discover"]
+  id: testing
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
+  id: build
 timeout: "1600s"

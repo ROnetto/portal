@@ -110,7 +110,7 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
         new_vaccination_data = {
             'dose': new_dose,
         }
-        resp = self.client.patch(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.drug.id}),
+        resp = self.client.patch(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
                                  new_vaccination_data, headers=self.headers, content_type=self.content_type)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue('dose' in resp.data)
@@ -126,7 +126,7 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
             'dose': new_dose,
             'drug_id': self.vaccination.drug.id
         }
-        resp = self.client.put(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.drug.id}),
+        resp = self.client.put(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
                                vaccination_update_data, headers=self.headers, content_type=self.content_type)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
@@ -139,8 +139,8 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
             'dose': new_dose,
             'drug_id': self.vaccination.drug.id
         }
-        resp = self.client.patch(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.drug.id}),
-                                 vaccination_update_data, headers=self.headers, content_type=self.content_type)
+        resp = self.client.put(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
+                               vaccination_update_data, headers=self.headers, content_type=self.content_type)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue('dose' in resp.data)
 
