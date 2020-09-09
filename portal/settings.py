@@ -96,6 +96,13 @@ if os.getenv('GAE_APPLICATION', None):
             'PASSWORD': 'api-testing',
         }
     }
+elif os.getenv('PORTAL_LOCAL', False):
+    DATABASES = {
+        'default': {
+         'ENGINE': 'django.db.backends.sqlite3',
+         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 else:
     DATABASES = {
         'default': {
