@@ -8,6 +8,7 @@ steps:
   args: ["manage.py", "test"]
   env:
     - "DJANGO_SETTINGS_MODULE=portal.settings"
+    - "GAE_APPLICATION=True"
   id: testing
   waitFor:
     - install
