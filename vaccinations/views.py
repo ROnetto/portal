@@ -1,10 +1,11 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework_simplejwt.views import TokenViewBase
 
 from vaccinations.models import Vaccination
 from vaccinations.serializers import VaccinationSerializer
 
 
-class VaccinationListCreateAPIView(ListCreateAPIView):
+class VaccinationListCreateAPIView(ListCreateAPIView, TokenViewBase):
     serializer_class = VaccinationSerializer
     queryset = Vaccination.objects.all()
 
@@ -12,7 +13,7 @@ class VaccinationListCreateAPIView(ListCreateAPIView):
 vaccination_list_create_view = VaccinationListCreateAPIView.as_view()
 
 
-class VaccinationRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+class VaccinationRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView, TokenViewBase):
     serializer_class = VaccinationSerializer
     queryset = Vaccination.objects.all()
     lookup_field = 'id'
