@@ -31,7 +31,7 @@ class DrugSetUp(TestCase):
         resp = self.client.post(reverse('token_verify'), token_data, content_type=self.content_type)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-        self.headers = {'Authorization': f'Bearer {self.token}'}
+        self.headers = {'HTTP_AUTHORIZATION': f'Bearer {self.token}'}
 
         self.drug = Drug.objects.create(name='Drug1', code='drug1', description='drug1')
 
@@ -39,7 +39,7 @@ class DrugSetUp(TestCase):
 class TestDrugListCreateView(DrugSetUp):
 
     def test_get(self):
-        resp = self.client.get(reverse('drug:list_create'), headers=self.headers, content_type=self.content_type)
+        resp = self.client.get(reverse('drug:list_create'), content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         drug_list = resp.data
 
@@ -55,8 +55,8 @@ class TestDrugListCreateView(DrugSetUp):
             'description': 'Drug 2 description'
         }
 
-        resp = self.client.post(reverse('drug:list_create'), new_drug_data, headers=self.headers,
-                                content_type=self.content_type)
+        resp = self.client.post(reverse('drug:list_create'), new_drug_data, content_type=self.content_type,
+                                **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
         drug_count += 1
@@ -68,8 +68,8 @@ class TestDrugListCreateView(DrugSetUp):
             'code': 'drug2',
             'description': 'Drug 3 description'
         }
-        resp = self.client.post(reverse('drug:list_create'), new_drug_data, headers=self.headers,
-                                content_type=self.content_type)
+        resp = self.client.post(reverse('drug:list_create'), new_drug_data, content_type=self.content_type,
+                                **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
         self.assertTrue('code' in resp.data)
@@ -80,14 +80,14 @@ class TestDrugRetrieveUpdateDestroyView(DrugSetUp):
 
     def test_get(self):
         resp = self.client.get(reverse('drug:retrieve_update_delete', kwargs={'id': self.drug.id}),
-                               headers=self.headers, content_type=self.content_type)
+                               content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         drug_data = resp.data
 
         self.assertEqual(drug_data['code'], self.drug.code)
 
         resp = self.client.get(reverse('drug:retrieve_update_delete', kwargs={'id': 1000}),
-                               headers=self.headers, content_type=self.content_type)
+                               **self.headers, content_type=self.content_type)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_patch(self):
@@ -96,7 +96,7 @@ class TestDrugRetrieveUpdateDestroyView(DrugSetUp):
             'code': new_code,
         }
         resp = self.client.patch(reverse('drug:retrieve_update_delete', kwargs={'id': self.drug.id}), new_drug_data,
-                                 headers=self.headers, content_type=self.content_type)
+                                 content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         current_drug = Drug.objects.first()
@@ -107,12 +107,12 @@ class TestDrugRetrieveUpdateDestroyView(DrugSetUp):
             'code': new_code,
         }
         resp = self.client.patch(reverse('drug:retrieve_update_delete', kwargs={'id': self.drug.id}), new_drug_data,
-                                 headers=self.headers, content_type=self.content_type)
+                                 content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue('code' in resp.data)
 
         resp = self.client.patch(reverse('drug:retrieve_update_delete', kwargs={'id': 1000}), new_drug_data,
-                                 headers=self.headers, content_type=self.content_type)
+                                 content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put(self):
@@ -123,7 +123,7 @@ class TestDrugRetrieveUpdateDestroyView(DrugSetUp):
             'description': self.drug.description
         }
         resp = self.client.put(reverse('drug:retrieve_update_delete', kwargs={'id': self.drug.id}), drug_update_data,
-                               headers=self.headers, content_type=self.content_type)
+                               content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         current_drug = Drug.objects.first()
@@ -136,28 +136,26 @@ class TestDrugRetrieveUpdateDestroyView(DrugSetUp):
             'description': self.drug.description
         }
         resp = self.client.patch(reverse('drug:retrieve_update_delete', kwargs={'id': self.drug.id}), drug_update_data,
-                                 headers=self.headers, content_type=self.content_type)
+                                 content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue('code' in resp.data)
 
         resp = self.client.put(reverse('drug:retrieve_update_delete', kwargs={'id': 1000}), drug_update_data,
-                               headers=self.headers, content_type=self.content_type)
+                               content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete(self):
         drug_count = Drug.objects.count()
 
         resp = self.client.delete(reverse('drug:retrieve_update_delete', kwargs={'id': self.drug.id}),
-                                  headers=self.headers,
-                                  content_type=self.content_type)
+                                  content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         drug_count -= 1
 
         self.assertEqual(drug_count, Drug.objects.count())
 
         resp = self.client.delete(reverse('drug:retrieve_update_delete', kwargs={'id': 1000}),
-                                  headers=self.headers,
-                                  content_type=self.content_type)
+                                  content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
         self.assertEqual(drug_count, Drug.objects.count())

@@ -37,7 +37,7 @@ class VaccinationSetUp(TestCase):
         resp = self.client.post(reverse('token_verify'), token_data, content_type=self.content_type)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-        self.headers = {'Authorization': f'Bearer {self.token}'}
+        self.headers = {'HTTP_AUTHORIZATION': f'Bearer {self.token}'}
 
         self.drug = Drug.objects.create(name='Drug1', code='drug1', description='drug1')
         self.vaccination = Vaccination.objects.create(rut=self.valid_rut, dose='0.15', drug=self.drug)
@@ -46,7 +46,7 @@ class VaccinationSetUp(TestCase):
 class TestVaccinationListCreateView(VaccinationSetUp):
 
     def test_get(self):
-        resp = self.client.get(reverse('vaccination:list_create'), headers=self.headers)
+        resp = self.client.get(reverse('vaccination:list_create'), content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         vaccination_list = resp.data
 
@@ -62,7 +62,8 @@ class TestVaccinationListCreateView(VaccinationSetUp):
             'drug_id': self.drug.id
         }
 
-        resp = self.client.post(reverse('vaccination:list_create'), new_vaccination_data, headers=self.headers)
+        resp = self.client.post(reverse('vaccination:list_create'), new_vaccination_data,
+                                content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
         self.assertEqual(vaccination_count + 1, Vaccination.objects.count())
@@ -73,7 +74,8 @@ class TestVaccinationListCreateView(VaccinationSetUp):
             'dose': Decimal(random.randrange(15, 100)) / 100,
             'drug_id': self.drug.id
         }
-        resp = self.client.post(reverse('vaccination:list_create'), new_vaccination_data, headers=self.headers)
+        resp = self.client.post(reverse('vaccination:list_create'), new_vaccination_data,
+                                content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
         self.assertTrue('rut' in resp.data)
@@ -84,14 +86,14 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
 
     def test_get(self):
         resp = self.client.get(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
-                               headers=self.headers, content_type=self.content_type)
+                               content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         vaccination_data = resp.data
 
         self.assertEqual(vaccination_data['rut'], self.vaccination.rut)
 
         resp = self.client.get(reverse('vaccination:retrieve_update_delete', kwargs={'id': 1000}),
-                               headers=self.headers, content_type=self.content_type)
+                               content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_patch(self):
@@ -100,7 +102,7 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
             'dose': new_dose,
         }
         resp = self.client.patch(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
-                                 new_vaccination_data, headers=self.headers, content_type=self.content_type)
+                                 new_vaccination_data, content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         current_vaccination = Vaccination.objects.first()
@@ -111,12 +113,12 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
             'dose': new_dose,
         }
         resp = self.client.patch(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
-                                 new_vaccination_data, headers=self.headers, content_type=self.content_type)
+                                 new_vaccination_data, content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue('dose' in resp.data)
 
         resp = self.client.patch(reverse('vaccination:retrieve_update_delete', kwargs={'id': 1000}),
-                                 new_vaccination_data, headers=self.headers, content_type=self.content_type)
+                                 new_vaccination_data, content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put(self):
@@ -127,7 +129,7 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
             'drug_id': self.vaccination.drug.id
         }
         resp = self.client.put(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
-                               vaccination_update_data, headers=self.headers, content_type=self.content_type)
+                               vaccination_update_data, content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         current_vaccination = Vaccination.objects.first()
@@ -140,26 +142,26 @@ class TestVaccinationRetrieveUpdateDestroyView(VaccinationSetUp):
             'drug_id': self.vaccination.drug.id
         }
         resp = self.client.put(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
-                               vaccination_update_data, headers=self.headers, content_type=self.content_type)
+                               vaccination_update_data, content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue('dose' in resp.data)
 
         resp = self.client.put(reverse('vaccination:retrieve_update_delete', kwargs={'id': 1000}),
-                               vaccination_update_data, headers=self.headers, content_type=self.content_type)
+                               vaccination_update_data, content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete(self):
         vaccination_count = Vaccination.objects.count()
 
         resp = self.client.delete(reverse('vaccination:retrieve_update_delete', kwargs={'id': self.vaccination.id}),
-                                  headers=self.headers, content_type=self.content_type)
+                                  content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         vaccination_count -= 1
 
         self.assertEqual(vaccination_count, Vaccination.objects.count())
 
         resp = self.client.delete(reverse('vaccination:retrieve_update_delete', kwargs={'id': 1000}),
-                                  headers=self.headers, content_type=self.content_type)
+                                  content_type=self.content_type, **self.headers)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
         self.assertEqual(vaccination_count, Vaccination.objects.count())
