@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'v)%+kckm0o%w&3pfiyb)y57bj)y_ao^x8o+g)6)dwodr5i57v_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 APPEND_SLASH = False
 
 ALLOWED_HOSTS = ['portal-api-288802.uc.r.appspot.com']
