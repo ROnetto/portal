@@ -25,4 +25,3 @@ class VaccinationRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 
 vaccination_retrieve_update_delete_view = VaccinationRetrieveUpdateDestroyAPIView.as_view()
-

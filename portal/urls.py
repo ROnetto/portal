@@ -22,6 +22,6 @@ urlpatterns = [
     path('api/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify', TokenVerifyView.as_view(), name='token_verify'),
-    path('api/drug', include("drugs.urls", namespace="drug")),
-    path('api/vaccination', include("vaccinations.urls", namespace="vaccination"))
+    path('api/drugs', include("drugs.urls", namespace="drugs")),
+    path('api/vaccinations', include("vaccinations.urls", namespace="vaccinations"))
 ]

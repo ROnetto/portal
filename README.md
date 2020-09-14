@@ -13,7 +13,7 @@ Activate virtual env:
 - source {env_name}/bin/activate
 
 Install libraries:
-- pip install -r requirements.py
+- pip install -r requirements.txt
 
 Database:
 - Set your database in portal/settings.py
